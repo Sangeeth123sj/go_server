@@ -7,12 +7,26 @@ package main
 4. "time" - a library for working with date and time.*/
 import (
 	"fmt"
+	"go_server/controller"
 	"net/http"
 	"text/template"
 )
 
 //Go application entrypoint
 func main() {
+	type welcome struct {
+		Name string
+	}
+
+	var person1 welcome
+	person1.Name = "Sangeeth"
+
+	var person2 welcome
+	person2.Name = "Joseph"
+
+	a := 1234
+	sum := controller.Add(a)
+	fmt.Print(sum)
 	//Instantiate a Welcome struct object and pass in some random information.
 	//We shall get the name of the user as a query parameter from the URL
 	//welcome := Welcome{"Anonymous", time.Now().Format(time.Stamp)}
@@ -38,7 +52,19 @@ func main() {
 
 		//If errors show an internal server error message
 		//I also pass the welcome struct to the welcome-template.html file.
-		if err := templates.ExecuteTemplate(w, "home.html", "d"); err != nil {
+
+		if err := templates.ExecuteTemplate(w, "home.html", person1); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	})
+
+	templates2 := template.Must(template.ParseFiles("new.html"))
+	http.HandleFunc("/new", func(w http.ResponseWriter, r *http.Request) {
+
+		//If errors show an internal server error message
+		//I also pass the welcome struct to the welcome-template.html file.
+
+		if err := templates2.ExecuteTemplate(w, "new.html", person2); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	})
@@ -46,5 +72,6 @@ func main() {
 	//Start the web server, set the port to listen to 8080. Without a path it assumes localhost
 	//Print any errors from starting the webserver using fmt
 	fmt.Println("Listening")
+	fmt.Println("http://127.0.0.1:8080/")
 	fmt.Println(http.ListenAndServe(":8080", nil))
 }

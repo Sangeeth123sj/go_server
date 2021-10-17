@@ -1,4 +1,4 @@
-module example.com/hello
+module go_server
 
 go 1.13
 
